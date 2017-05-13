@@ -29,7 +29,6 @@ export default class KeyVal {
     constructor (url) {
         this.url    = url
         this.opened = false
-        this.leveldown =
         try {
             this.leveldown = require("leveldown")
         }
