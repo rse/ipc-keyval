@@ -22,10 +22,9 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/* eslint no-console: off */
 import URI from "urijs"
 
-/*  Key-Value for Remote-Process-Model (RPM) with SQLite Database  */
+/*  Key-Value for Remote-Process-Model (RPM) with SQLite embedded database  */
 export default class KeyVal {
     constructor (url) {
         this.url    = url

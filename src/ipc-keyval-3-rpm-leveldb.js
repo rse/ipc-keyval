@@ -22,14 +22,20 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import levelup   from "levelup"
-import leveldown from "leveldown"
+import levelup from "levelup"
 
-/*  Key-Value for Remote-Process-Model (SPM) with LevelDB  */
+/*  Key-Value for Remote-Process-Model (SPM) with LevelDB embedded database  */
 export default class KeyVal {
     constructor (url) {
         this.url    = url
         this.opened = false
+        this.leveldown =
+        try {
+            this.leveldown = require("leveldown")
+        }
+        catch (ex) {
+            throw new Error("require LevelDOWN module (NPM package \"leveldown\")")
+        }
     }
 
     /*  open connection  */
@@ -45,7 +51,7 @@ export default class KeyVal {
                 compression:     true,
                 keyEncoding:     "utf8",
                 valueEncoding:   "json",
-                db: leveldown
+                db: this.leveldown
             }, (err, db) => {
                 if (err)
                     reject(err)

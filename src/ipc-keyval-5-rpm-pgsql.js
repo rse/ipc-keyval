@@ -22,10 +22,10 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/* eslint no-console: off */
 import URI from "urijs"
+import pg  from "pg"
 
-/*  Key-Value for Remote-Process-Model (RPM) with SQLite Database  */
+/*  Key-Value for Remote-Process-Model (RPM) with PostgreSQL standalone database  */
 export default class KeyVal {
     constructor (url) {
         this.url    = url
@@ -42,12 +42,6 @@ export default class KeyVal {
             throw new Error("require path in URL")
         if (this.url.query)
             this.options = Object.assign(this.options, URI.parseQuery(this.url.query))
-        try {
-            this.pg = require("pg")
-        }
-        catch (ex) {
-            throw new Error("require PostgreSQL module (NPM package \"pg\")")
-        }
     }
 
     /*  open connection  */
@@ -64,7 +58,7 @@ export default class KeyVal {
             config.password = this.url.auth.split(":")[1]
         }
         return new Promise((resolve, reject) => {
-            this.db = new this.pg.Client(config)
+            this.db = new pg.Client(config)
             this.db.connect((err) => {
                 if (err) reject(err)
                 else     resolve()

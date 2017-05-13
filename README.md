@@ -41,6 +41,15 @@ Installation
 $ npm install ipc-keyval --save-dev
 ```
 
+For Remote-Process-Model (RPM) with LevelDB or SQLite, additional
+drivers are required. As they are based on native code, you have to
+install them manually:
+
+```shell
+$ npm install sqlite3   --save-dev # for SQLite
+$ npm install leveldown --save-dev # for LevelDB
+```
+
 Usage
 -----
 

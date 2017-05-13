@@ -24,7 +24,7 @@
 
 import redis from "redis"
 
-/*  Key-Value for Remote-Process-Model (RPM) with REDIS Database  */
+/*  Key-Value for Remote-Process-Model (RPM) with REDIS standalone database  */
 export default class KeyVal {
     constructor (url) {
         this.url = url
