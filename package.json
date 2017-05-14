@@ -22,6 +22,7 @@
         "pg":                                        "~6.1.5",
         "redis":                                     "~2.7.1",
         "levelup":                                   "~1.3.6",
+        "lokijs":                                    "~1.4.3",
         "babel-runtime":                             "~6.23.0"
     },
     "devDependencies": {
@@ -54,6 +55,6 @@
     "scripts": {
         "prepublish":  "grunt default",
         "build":       "grunt default",
-        "test":        "grunt default && node sample/rpm-leveldb.js"
+        "test":        "grunt default && node sample/rpm-lokijs.js"
     }
 }

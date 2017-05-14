@@ -32,7 +32,7 @@ supports the following modes:
   This is for Node applications split into distinct process, usually
   running also on distinct machines.
   The storage is performed with the help of an external database.
-  Currently LevelDB, SQLite, PostgreSQL and Redis are supported.
+  Currently LokiJS, LevelDB, SQLite, PostgreSQL and Redis are supported.
 
 Installation
 ------------
@@ -82,6 +82,7 @@ The following URLs are supported on `new KeyVal(url)`:
 
 - `spm`
 - `mpm`
+- `rpm+lokijs://<filename>`
 - `rpm+leveldb://<filename>`
 - `rpm+sqlite://<filename>[?table=<table>&key=<col>&val=<col>]`
 - `rpm+pgsql://[<username>:<password>@]<host>[:<port>][/<database>][?table=<table>&key=<col>&val=<col>]`
