@@ -82,11 +82,17 @@ export default class KeyVal {
     }
 
     /*  retrieve all keys  */
-    keys () {
+    keys (pattern) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
-            this.db.query(`SELECT ${this.options.colKey} FROM ${this.options.table};`, [],
+            let sql = `SELECT ${this.options.colKey} FROM ${this.options.table}`
+            if (typeof pattern === "string") {
+                pattern = `^${pattern.replace(/([.?{}])/g, "\\$1").replace(/\*/g, ".+?").replace(/'/g, "''")}$`
+                sql += ` WHERE ${this.options.colKey} ~ '${pattern}'`
+            }
+            sql += ";"
+            this.db.query(sql, [],
                 (err, result) => {
                     if (err)
                         reject(err)

@@ -25,7 +25,7 @@
 declare class KeyVal {
     constructor (url: string);
     open(): Promise<void>;
-    keys(): Promise<string[]>;
+    keys(pattern?: string): Promise<string[]>;
     put(key: string, value: any): Promise<void>;
     get(key: string): Promise<any>;
     del(key: string): Promise<void>;

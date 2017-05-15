@@ -62,7 +62,7 @@ Usage
     await keyval.open()
 
     /*  retrieve all keys  */
-    await keyval.keys("foo")
+    await keyval.keys("*")
 
     /*  store a value  */
     await keyval.put("foo", "bar")
@@ -95,7 +95,7 @@ Application Programming Interface (API)
 declare class KeyVal {
     constructor (url: string);
     open(): Promise<void>;
-    keys(): Promise<string[]>;
+    keys(pattern?: string): Promise<string[]>;
     put(key: string, value: any): Promise<void>;
     get(key: string): Promise<any>;
     del(key: string): Promise<void>;

@@ -64,13 +64,15 @@ export default class KeyVal {
     }
 
     /*  retrieve all keys  */
-    keys () {
+    keys (pattern) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
             let keys = []
+            let regexp = (typeof pattern === "string" ?
+                new RegExp(`^${pattern.replace(/([.?{}])/g, "\\$1").replace(/\*/g, ".+?")}$`) : /^.+$/)
             this.db.createKeyStream()
-                .on("data",  (data) => { keys.push(data) })
+                .on("data",  (data) => { if (regexp.test(data)) keys.push(data) })
                 .on("error", (err)  => { reject(err) })
                 .on("end",   ()     => { resolve(keys) })
         })

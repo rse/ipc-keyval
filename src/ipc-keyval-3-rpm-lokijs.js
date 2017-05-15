@@ -58,7 +58,7 @@ export default class KeyVal {
     }
 
     /*  retrieve all keys  */
-    keys () {
+    keys (pattern) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -66,7 +66,13 @@ export default class KeyVal {
                 if (err)
                     reject(err)
                 else {
-                    let results = this.kv.find({})
+                    let results
+                    if (typeof pattern === "string") {
+                        let regexp = new RegExp(`^${pattern.replace(/([.?{}])/g, "\\$1").replace(/\*/g, ".+?")}$`)
+                        results = this.kv.find({ key: { "$regex": regexp } })
+                    }
+                    else
+                        results = this.kv.find({})
                     let keys = []
                     if (results !== null)
                         keys = results.map((record) => record.key)

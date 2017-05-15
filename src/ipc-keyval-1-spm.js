@@ -38,10 +38,14 @@ export default class KeyVal {
     }
 
     /*  retrieve all keys  */
-    keys () {
+    keys (pattern) {
         if (!this.opened)
             throw new Error("still not opened")
         let keys = Object.keys(this.store)
+        if (typeof pattern === "string") {
+            pattern = new RegExp(`^${pattern.replace(/([.?{}])/g, "\\$1").replace(/\*/g, ".+?")}$`)
+            keys = keys.filter((key) => pattern.test(key))
+        }
         return Promise.resolve(keys)
     }
 

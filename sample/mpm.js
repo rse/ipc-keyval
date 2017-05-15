@@ -38,6 +38,12 @@ const cluster = require("cluster")
 
         keys = await keyval.keys()
         console.log("KEYS", cluster.isMaster, process.pid, keys)
+
+        await keyval.put("foo.bar.quux", "bar")
+        await keyval.put("foo.baz.quux", "baz")
+
+        keys = await keyval.keys("foo.*.quux")
+        console.log("KEYS", cluster.isMaster, process.pid, keys)
     }, cluster.isMaster ? 1000 : 2000)
 })()
 

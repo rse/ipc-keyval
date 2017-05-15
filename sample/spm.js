@@ -26,6 +26,12 @@ const KeyVal = require("..")
     keys = await keyval.keys()
     console.log("KEYS", keys)
 
+    await keyval.put("foo.bar.quux", "bar")
+    await keyval.put("foo.baz.quux", "baz")
+
+    keys = await keyval.keys("foo.*.quux")
+    console.log("KEYS", keys)
+
     await keyval.close()
 })()
 
