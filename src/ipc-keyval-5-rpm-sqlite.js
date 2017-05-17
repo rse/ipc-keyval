@@ -22,13 +22,17 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import URI from "urijs"
+import URI  from "urijs"
+import Lock from "lock"
 
 /*  Key-Value for Remote-Process-Model (RPM) with SQLite embedded database  */
 export default class KeyVal {
     constructor (url) {
         this.url    = url
         this.opened = false
+        this.lock   = Lock()
+        this.locked = false
+        this.unlock = null
         this.options = {
             database: null,
             table:    "KeyVal",
@@ -62,6 +66,16 @@ export default class KeyVal {
                     else     resolve()
                 }
             )
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                this.db.configure("busyTimeout", 10 * 1000)
+                this.db.run("PRAGMA journal_mode = WAL;", [],
+                    (err) => {
+                        if (err) reject(err)
+                        else     resolve()
+                    }
+                )
+            })
         }).then(() => {
             return new Promise((resolve, reject) => {
                 this.db.run(`CREATE TABLE IF NOT EXISTS ${this.options.table} ` +
@@ -158,10 +172,56 @@ export default class KeyVal {
         })
     }
 
+    /*  acquire mutual exclusion lock  */
+    acquire () {
+        if (!this.opened)
+            throw new Error("still not opened")
+        return new Promise((resolve, reject) => {
+            this.lock("IPC-KeyVal", (unlock) => {
+                this.unlock = unlock
+                this.locked = true
+                this.db.run("BEGIN TRANSACTION;", [],
+                    (err) => {
+                        if (err) reject(err)
+                        else     resolve()
+                    }
+                )
+            })
+        })
+    }
+
+    /*  release mutual exclusion lock  */
+    release () {
+        if (!this.opened)
+            throw new Error("still not opened")
+        if (!this.locked)
+            throw new Error("still not acquired")
+        return new Promise((resolve, reject) => {
+            this.db.run("COMMIT;", [],
+                (err) => {
+                    if (err) reject(err)
+                    else {
+                        this.unlock((err) => {
+                            if (err)
+                                reject(err)
+                            else {
+                                this.unlock = null
+                                this.locked = false
+                                resolve()
+                            }
+                        })()
+                    }
+                }
+            )
+        })
+    }
+
     /*  close connection  */
     close () {
         if (!this.opened)
             throw new Error("still not opened")
+        if (this.locked)
+            this.unlock()
         return new Promise((resolve, reject) => {
             this.db.close((err) => {
                 if (err)

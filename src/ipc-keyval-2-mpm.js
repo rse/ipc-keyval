@@ -23,6 +23,7 @@
 */
 
 import cluster from "cluster"
+import Lock    from "lock"
 
 /*  internal Key-Value store  */
 class Store {
@@ -37,6 +38,9 @@ class Store {
 export default class KeyVal {
     constructor (/* url */) {
         this.opened = false
+        this.lock   = Lock()
+        this.locked = false
+        this.unlock = null
     }
 
     /*  open connection  */
@@ -49,7 +53,7 @@ export default class KeyVal {
                 debug: true,
                 addOnFork: true,
                 instance:  store,
-                methods:   [ "keys", "put", "get", "del" ],
+                methods:   [ "keys", "put", "get", "del", "acquire", "release" ],
                 name:      "KeyVal-mpm"
             })
         }
@@ -101,10 +105,40 @@ export default class KeyVal {
         return Promise.resolve(result)
     }
 
+    /*  acquire mutual exclusion lock  */
+    acquire () {
+        return new Promise((resolve /*, reject */) => {
+            this.lock("IPC-KeyVal", (unlock) => {
+                this.locked = true
+                this.unlock = unlock
+                resolve()
+            })
+        })
+    }
+
+    /*  release mutual exclusion lock  */
+    release () {
+        if (!this.locked)
+            throw new Error("still not acquired")
+        return new Promise((resolve, reject) => {
+            this.unlock((err) => {
+                if (err)
+                    reject(err)
+                else {
+                    this.unlock = null
+                    this.locked = false
+                    resolve()
+                }
+            })()
+        })
+    }
+
     /*  close connection  */
     close () {
         if (!this.opened)
             throw new Error("still not opened")
+        if (this.locked)
+            this.unlock()
         delete this.store
         delete this.crpc
         this.opened = false

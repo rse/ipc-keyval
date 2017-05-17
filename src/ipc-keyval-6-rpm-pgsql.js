@@ -22,14 +22,18 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import URI from "urijs"
-import pg  from "pg"
+import URI  from "urijs"
+import pg   from "pg"
+import Lock from "lock"
 
 /*  Key-Value for Remote-Process-Model (RPM) with PostgreSQL standalone database  */
 export default class KeyVal {
     constructor (url) {
         this.url    = url
         this.opened = false
+        this.lock   = Lock()
+        this.locked = false
+        this.unlock = null
         this.options = {
             database: null,
             table:    "KeyVal",
@@ -156,6 +160,50 @@ export default class KeyVal {
                 (err) => {
                     if (err) reject(err)
                     else     resolve()
+                }
+            )
+        })
+    }
+
+    /*  acquire mutual exclusion lock  */
+    acquire () {
+        if (!this.opened)
+            throw new Error("still not opened")
+        return new Promise((resolve, reject) => {
+            this.lock("IPC-KeyVal", (unlock) => {
+                this.unlock = unlock
+                this.locked = true
+                this.db.query("BEGIN TRANSACTION;", [],
+                    (err) => {
+                        if (err) reject(err)
+                        else     resolve()
+                    }
+                )
+            })
+        })
+    }
+
+    /*  release mutual exclusion lock  */
+    release () {
+        if (!this.opened)
+            throw new Error("still not opened")
+        if (!this.locked)
+            throw new Error("still not acquired")
+        return new Promise((resolve, reject) => {
+            this.db.query("COMMIT;", [],
+                (err) => {
+                    if (err) reject(err)
+                    else {
+                        this.unlock((err) => {
+                            if (err)
+                                reject(err)
+                            else {
+                                this.unlock = null
+                                this.locked = false
+                                resolve()
+                            }
+                        })()
+                    }
                 }
             )
         })

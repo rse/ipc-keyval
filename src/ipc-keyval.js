@@ -63,6 +63,8 @@ class KeyVal {
     put       (...args) { return this.strategy.put(...args) }
     get       (...args) { return this.strategy.get(...args) }
     del       (...args) { return this.strategy.del(...args) }
+    acquire   (...args) { return this.strategy.acquire(...args) }
+    release   (...args) { return this.strategy.release(...args) }
     close     (...args) { return this.strategy.close(...args) }
 }
 

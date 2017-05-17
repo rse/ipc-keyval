@@ -22,13 +22,17 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import redis from "redis"
+import redis     from "redis"
+import redisLock from "redis-lock"
 
 /*  Key-Value for Remote-Process-Model (RPM) with REDIS standalone database  */
 export default class KeyVal {
     constructor (url) {
-        this.url = url
+        this.url    = url
         this.opened = false
+        this.lock   = null
+        this.locked = false
+        this.unlock = null
     }
 
     /*  open connection  */
@@ -48,6 +52,7 @@ export default class KeyVal {
             else
                 this.prefix = ""
             this.client = redis.createClient(options)
+            this.lock = redisLock(this.client)
             let handled = false
             this.client.on("connect", () => {
                 if (handled)
@@ -123,10 +128,40 @@ export default class KeyVal {
         })
     }
 
+    /*  acquire mutual exclusion lock  */
+    acquire () {
+        if (!this.opened)
+            throw new Error("still not opened")
+        return new Promise((resolve, reject) => {
+            this.lock("IPC-KeyVal", (unlock) => {
+                this.unlock = unlock
+                this.locked = true
+                resolve()
+            })
+        })
+    }
+
+    /*  release mutual exclusion lock  */
+    release () {
+        if (!this.opened)
+            throw new Error("still not opened")
+        if (!this.locked)
+            throw new Error("still not acquired")
+        return new Promise((resolve, reject) => {
+            this.unlock(() => {
+                this.unlock = null
+                this.locked = false
+                resolve()
+            })
+        })
+    }
+
     /*  close connection  */
     close () {
         if (!this.opened)
             throw new Error("still not opened")
+        if (this.locked)
+            this.unlock()
         this.client.quit()
         delete this.client
         this.opened = false
