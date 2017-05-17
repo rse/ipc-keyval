@@ -147,7 +147,7 @@ export default class KeyVal {
                         reject(err)
                     else {
                         let value
-                        if (result)
+                        if (typeof result === "object" && result !== null)
                             value = JSON.parse(result[this.options.colVal])
                         resolve(value)
                     }

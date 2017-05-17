@@ -111,7 +111,12 @@ export default class KeyVal {
         return new Promise((resolve, reject) => {
             this.client.get(key, (err, value) => {
                 if (err) reject(err)
-                else     resolve(JSON.parse(value))
+                else {
+                    value = JSON.parse(value)
+                    if (value === null)
+                        value = undefined
+                    resolve(value)
+                }
             })
         })
     }
