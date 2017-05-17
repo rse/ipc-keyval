@@ -26,11 +26,9 @@ import URL              from "url"
 
 import KeyValSPM        from "./ipc-keyval-1-spm"
 import KeyValMPM        from "./ipc-keyval-2-mpm"
-import KeyValRPMlokijs  from "./ipc-keyval-3-rpm-lokijs"
-import KeyValRPMleveldb from "./ipc-keyval-4-rpm-leveldb"
-import KeyValRPMsqlite  from "./ipc-keyval-5-rpm-sqlite"
-import KeyValRPMpgsql   from "./ipc-keyval-6-rpm-pgsql"
-import KeyValRPMredis   from "./ipc-keyval-7-rpm-redis"
+import KeyValRPMsqlite  from "./ipc-keyval-3-rpm-sqlite"
+import KeyValRPMpgsql   from "./ipc-keyval-4-rpm-pgsql"
+import KeyValRPMredis   from "./ipc-keyval-5-rpm-redis"
 
 /*  Key-Value API  */
 class KeyVal {
@@ -42,16 +40,9 @@ class KeyVal {
         else if (url === "mpm")
             this.strategy = new KeyValMPM(urlParsed)
         else if (typeof urlParsed.protocol === "string" && (m = urlParsed.protocol.match(/^rpm(?:\+([a-z]+))?:$/)) !== null) {
-            if (m[1] === "lokijs")
-                this.strategy = new KeyValRPMlokijs(urlParsed)
-            else if (m[1] === "leveldb")
-                this.strategy = new KeyValRPMleveldb(urlParsed)
-            else if (m[1] === "sqlite")
-                this.strategy = new KeyValRPMsqlite(urlParsed)
-            else if (m[1] === "pgsql")
-                this.strategy = new KeyValRPMpgsql(urlParsed)
-            else if (m[1] === "redis")
-                this.strategy = new KeyValRPMredis(urlParsed)
+            if      (m[1] === "sqlite") this.strategy = new KeyValRPMsqlite(urlParsed)
+            else if (m[1] === "pgsql")  this.strategy = new KeyValRPMpgsql(urlParsed)
+            else if (m[1] === "redis")  this.strategy = new KeyValRPMredis(urlParsed)
             else
                 throw new Error(`unknown implementation strategy "${url}"`)
         }

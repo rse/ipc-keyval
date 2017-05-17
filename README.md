@@ -32,7 +32,7 @@ supports the following modes:
   This is for Node applications split into distinct process, usually
   running also on distinct machines.
   The storage is performed with the help of an external database.
-  Currently LokiJS, LevelDB, SQLite, PostgreSQL and Redis are supported.
+  Currently SQLite, PostgreSQL and Redis are supported.
 
 Installation
 ------------
@@ -41,13 +41,12 @@ Installation
 $ npm install ipc-keyval --save-dev
 ```
 
-For Remote-Process-Model (RPM) with LevelDB or SQLite, additional
-drivers are required. As they are based on native code, you have to
-install them manually:
+For Remote-Process-Model (RPM) with SQLite an additional
+driver is required. As this is based on native code, you have to
+install it manually:
 
 ```shell
-$ npm install sqlite3   --save-dev # for SQLite
-$ npm install leveldown --save-dev # for LevelDB
+$ npm install sqlite3 --save-dev # for SQLite
 ```
 
 Usage
@@ -82,8 +81,6 @@ The following URLs are supported on `new KeyVal(url)`:
 
 - `spm`
 - `mpm`
-- `rpm+lokijs://<filename>`
-- `rpm+leveldb://<filename>`
 - `rpm+sqlite://<filename>[?table=<table>&key=<col>&val=<col>]`
 - `rpm+pgsql://[<username>:<password>@]<host>[:<port>][/<database>][?table=<table>&key=<col>&val=<col>]`
 - `rpm+redis://[xxx:<secret>@]<host>[:<port>][/<scope>]`
