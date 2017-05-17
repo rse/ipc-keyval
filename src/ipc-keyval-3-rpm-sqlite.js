@@ -229,6 +229,7 @@ export default class KeyVal {
                 else {
                     delete this.db
                     this.opened = false
+                    resolve()
                 }
             })
         })
