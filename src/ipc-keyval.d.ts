@@ -29,6 +29,8 @@ declare class KeyVal {
     put(key: string, value: any): Promise<void>;
     get(key: string): Promise<any>;
     del(key: string): Promise<void>;
+    acquire(): Promise<void>;
+    release(): Promise<void>;
     close(): Promise<void>;
 }
 

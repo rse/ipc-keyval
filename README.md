@@ -72,6 +72,12 @@ Usage
     /*  delete a value  */
     await keyval.del("foo")
 
+    /*  acquire exclusive lock  */
+    await keyval.acquire()
+
+    /*  release exclusive lock  */
+    await keyval.release()
+
     /*  close connection  */
     await keyval.close()
 })
@@ -96,6 +102,8 @@ declare class KeyVal {
     put(key: string, value: any): Promise<void>;
     get(key: string): Promise<any>;
     del(key: string): Promise<void>;
+    acquire(): Promise<void>;
+    release(): Promise<void>;
     close(): Promise<void>;
 }
 ```
