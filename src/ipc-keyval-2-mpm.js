@@ -50,7 +50,7 @@ export default class KeyVal {
         if (cluster.isMaster) {
             let store = new Store()
             this.crpc = require("cluster-rpc/master").create({
-                debug: true,
+                debug:     false,
                 addOnFork: true,
                 instance:  store,
                 methods:   [ "keys", "put", "get", "del", "acquire", "release" ],
@@ -59,8 +59,8 @@ export default class KeyVal {
         }
         else {
             this.crpc = require("cluster-rpc/worker").create({
-                debug: true,
-                name: "KeyVal-mpm"
+                debug: false,
+                name:  "KeyVal-mpm"
             })
         }
         return this.crpc.then((store) => {
