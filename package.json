@@ -1,6 +1,6 @@
 {
     "name":        "ipc-keyval",
-    "version":     "0.9.11",
+    "version":     "0.9.12",
     "description": "Inter-Process-Communication Key-Value Storage",
     "keywords":    [ "ipc", "key", "value" ],
     "main":        "lib/ipc-keyval.js",
