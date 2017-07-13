@@ -37,7 +37,7 @@ class KeyVal {
         let urlParsed = URL.parse(url)
         if (url === "spm")
             this.strategy = new KeyValSPM(urlParsed)
-        else if (url === "mpm")
+        else if (urlParsed.protocol === "mpm:")
             this.strategy = new KeyValMPM(urlParsed)
         else if (typeof urlParsed.protocol === "string" && (m = urlParsed.protocol.match(/^rpm(?:\+([a-z]+))?:$/)) !== null) {
             if      (m[1] === "sqlite") this.strategy = new KeyValRPMsqlite(urlParsed)

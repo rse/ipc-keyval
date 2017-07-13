@@ -86,7 +86,7 @@ Usage
 The following URLs are supported on `new KeyVal(url)`:
 
 - `spm`
-- `mpm`
+- `mpm:<unique-id>`
 - `rpm+sqlite://<filename>[?table=<table>&key=<col>&val=<col>]`
 - `rpm+pgsql://[<username>:<password>@]<host>[:<port>][/<database>][?table=<table>&key=<col>&val=<col>]`
 - `rpm+redis://[xxx:<secret>@]<host>[:<port>][/<scope>]`
