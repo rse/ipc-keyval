@@ -74,7 +74,7 @@ module.exports = async function (url) {
             }
         }
         let done = 0
-        let max  = 10
+        let max  = 5
         for (let i = 0; i < max; i++) {
             run(i, () => {
                 if (++done === max)
