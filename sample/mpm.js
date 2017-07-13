@@ -13,9 +13,9 @@ const cluster = require("cluster")
         })
     }
     setTimeout(async () => {
-        console.log("START", cluster.isMaster, process.pid)
-        await suite("mpm")
-        console.log("END", cluster.isMaster, process.pid)
+        await suite("mpm:foo")
+        if (!cluster.isMaster)
+            process.exit(0)
     }, cluster.isMaster ? 1000 : 2000)
 })()
 
