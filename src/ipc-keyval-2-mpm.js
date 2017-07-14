@@ -27,7 +27,6 @@ import cluster  from "cluster"
 import Lock     from "lock"
 
 /*  internal Key-Value store  */
-/* eslint standard/no-callback-literal: off */
 class Store {
     constructor () {
         this.store = {}
@@ -79,7 +78,7 @@ export default class KeyVal {
                 addOnFork: true,
                 instance:  store,
                 methods:   methods,
-                name:      "KeyVal-mpm:" + this.id
+                name:      `KeyVal-mpm:${this.id}`
             })
             for (const id in cluster.workers)
                 this.crpc.addWorker(cluster.workers[id])
@@ -87,7 +86,7 @@ export default class KeyVal {
         else {
             this.crpc = require("cluster-rpc/worker").create({
                 debug: false,
-                name:  "KeyVal-mpm:" + this.id
+                name:  `KeyVal-mpm:${this.id}`
             })
         }
         return this.crpc.then((store) => {
