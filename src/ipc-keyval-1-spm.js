@@ -34,16 +34,15 @@ export default class KeyVal {
     }
 
     /*  open connection  */
-    open () {
+    async open () {
         if (this.opened)
             throw new Error("already opened")
         this.store = {}
         this.opened = true
-        return Promise.resolve()
     }
 
     /*  retrieve all keys  */
-    keys (pattern) {
+    async keys (pattern) {
         if (!this.opened)
             throw new Error("still not opened")
         let keys = Object.keys(this.store)
@@ -51,37 +50,35 @@ export default class KeyVal {
             pattern = new RegExp(`^${pattern.replace(/([.?{}])/g, "\\$1").replace(/\*/g, ".+?")}$`)
             keys = keys.filter((key) => pattern.test(key))
         }
-        return Promise.resolve(keys)
+        return keys
     }
 
     /*  put value under key into store  */
-    put (key, value) {
+    async put (key, value) {
         if (!this.opened)
             throw new Error("still not opened")
         this.store[key] = value
-        return Promise.resolve()
     }
 
     /*  get value under key from store  */
-    get (key) {
+    async get (key) {
         if (!this.opened)
             throw new Error("still not opened")
         let value = this.store[key]
-        return Promise.resolve(value)
+        return value
     }
 
     /*  delete value under key from store  */
-    del (key) {
+    async del (key) {
         if (!this.opened)
             throw new Error("still not opened")
         delete this.store[key]
-        return Promise.resolve()
     }
 
     /*  acquire mutual exclusion lock  */
-    acquire () {
+    async acquire () {
         return new Promise((resolve /*, reject */) => {
-            this.lock("IPC-KeyVal", (unlock) => {
+            this.lock("IPC-KeyVal-spm", (unlock) => {
                 this.unlock = unlock
                 this.locked = true
                 resolve()
@@ -90,7 +87,7 @@ export default class KeyVal {
     }
 
     /*  release mutual exclusion lock  */
-    release () {
+    async release () {
         if (!this.locked)
             throw new Error("still not acquired")
         return new Promise((resolve, reject) => {
@@ -107,14 +104,13 @@ export default class KeyVal {
     }
 
     /*  close connection  */
-    close () {
+    async close () {
         if (!this.opened)
             throw new Error("still not opened")
         if (this.locked)
-            this.unlock()
+            await this.release()
         delete this.store
         this.opened = false
-        return Promise.resolve()
     }
 }
 
