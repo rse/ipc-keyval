@@ -6,7 +6,7 @@ const cluster = require("cluster")
 
 ;(async () => {
     if (cluster.isMaster) {
-        for (let i = 0; i < 2; i++)
+        for (let i = 0; i < 1; i++)
             cluster.fork()
         cluster.on("exit", (worker, code, signal) => {
             console.log(`DIED ${worker.process.pid}`)
@@ -16,6 +16,6 @@ const cluster = require("cluster")
         await suite("mpm:foo")
         if (!cluster.isMaster)
             process.exit(0)
-    }, cluster.isMaster ? 1000 : 2000)
+    }, cluster.isMaster ? 1000 : 3000)
 })()
 
