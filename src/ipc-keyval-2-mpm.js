@@ -28,8 +28,11 @@ import Lock     from "lock"
 
 /*  internal Key-Value store  */
 class Store {
-    constructor () {
+    constructor (id) {
+        this.id = id
         this.store = {}
+        this.lock = Lock()
+        this.unlock = null
     }
     keys (pattern, cb) {
         let keys = Object.keys(this.store)
@@ -53,6 +56,28 @@ class Store {
         delete this.store[key]
         cb(null)
     }
+    acquire (cb) {
+        this.lock(`KeyVal-mpm:${this.id}:lock`, (unlock) => {
+            this.unlock = unlock
+            cb(null)
+        })
+    }
+    release (cb) {
+        this.unlock((err) => {
+            if (err)
+                cb(err)
+            else {
+                this.unlock = null
+                cb(null)
+            }
+        })()
+    }
+    destroy (cb) {
+        if (this.unlock !== null)
+            this.release(cb)
+        else
+            cb(null)
+    }
 }
 
 /*  Key-Value for Multi-Process-Model (MPM)  */
@@ -70,9 +95,9 @@ export default class KeyVal {
     async open () {
         if (this.opened)
             throw new Error("already opened")
-        let methods = [ "keys", "put", "get", "del" ]
+        let methods = [ "keys", "put", "get", "del", "acquire", "release", "destroy" ]
         if (cluster.isMaster) {
-            let store = new Store()
+            let store = new Store(this.id)
             this.crpc = require("cluster-rpc/master").create({
                 debug:     false,
                 addOnFork: true,
@@ -131,38 +156,19 @@ export default class KeyVal {
 
     /*  acquire mutual exclusion lock  */
     async acquire () {
-        return new Promise((resolve /*, reject */) => {
-            this.lock("IPC-KeyVal", (unlock) => {
-                this.locked = true
-                this.unlock = unlock
-                resolve()
-            })
-        })
+        return this.store.acquire()
     }
 
     /*  release mutual exclusion lock  */
     async release () {
-        if (!this.locked)
-            throw new Error("still not acquired")
-        return new Promise((resolve, reject) => {
-            this.unlock((err) => {
-                if (err)
-                    reject(err)
-                else {
-                    this.unlock = null
-                    this.locked = false
-                    resolve()
-                }
-            })()
-        })
+        return this.store.release()
     }
 
     /*  close connection  */
     async close () {
         if (!this.opened)
             throw new Error("still not opened")
-        if (this.locked)
-            this.unlock()
+        await this.store.destroy()
         delete this.store
         delete this.crpc
         this.opened = false
