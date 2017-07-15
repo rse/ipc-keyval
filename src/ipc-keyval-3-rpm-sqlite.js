@@ -54,10 +54,10 @@ export default class KeyVal {
     }
 
     /*  open connection  */
-    open () {
+    async open () {
         if (this.opened)
             throw new Error("already opened")
-        return new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
             this.db = new this.sqlite.Database(
                 this.options.database,
                 this.sqlite.OPEN_READWRITE | this.sqlite.OPEN_CREATE,
@@ -66,36 +66,34 @@ export default class KeyVal {
                     else     resolve()
                 }
             )
-        }).then(() => {
-            return new Promise((resolve, reject) => {
-                this.db.configure("busyTimeout", 10 * 1000)
-                this.db.run("PRAGMA journal_mode = WAL;", [],
-                    (err) => {
-                        if (err) reject(err)
-                        else     resolve()
+        })
+        await new Promise((resolve, reject) => {
+            this.db.configure("busyTimeout", 10 * 1000)
+            this.db.run("PRAGMA journal_mode = WAL;", [],
+                (err) => {
+                    if (err) reject(err)
+                    else     resolve()
+                }
+            )
+        })
+        return new Promise((resolve, reject) => {
+            this.db.run(`CREATE TABLE IF NOT EXISTS ${this.options.table} ` +
+                `(${this.options.colKey} VARCHAR(128) PRIMARY KEY, ` +
+                ` ${this.options.colVal} TEXT);`, [],
+                (err) => {
+                    if (err)
+                        reject(err)
+                    else {
+                        this.opened = true
+                        resolve()
                     }
-                )
-            })
-        }).then(() => {
-            return new Promise((resolve, reject) => {
-                this.db.run(`CREATE TABLE IF NOT EXISTS ${this.options.table} ` +
-                    `(${this.options.colKey} VARCHAR(128) PRIMARY KEY, ` +
-                    ` ${this.options.colVal} TEXT);`, [],
-                    (err) => {
-                        if (err)
-                            reject(err)
-                        else {
-                            this.opened = true
-                            resolve()
-                        }
-                    }
-                )
-            })
+                }
+            )
         })
     }
 
     /*  retrieve all keys  */
-    keys (pattern) {
+    async keys (pattern) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -119,7 +117,7 @@ export default class KeyVal {
     }
 
     /*  put value under key into store  */
-    put (key, value) {
+    async put (key, value) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -135,7 +133,7 @@ export default class KeyVal {
     }
 
     /*  get value under key from store  */
-    get (key) {
+    async get (key) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -157,7 +155,7 @@ export default class KeyVal {
     }
 
     /*  delete value under key from store  */
-    del (key) {
+    async del (key) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -173,11 +171,11 @@ export default class KeyVal {
     }
 
     /*  acquire mutual exclusion lock  */
-    acquire () {
+    async acquire () {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
-            this.lock("IPC-KeyVal", (unlock) => {
+            this.lock("IPC-KeyVal-rpm", (unlock) => {
                 this.unlock = unlock
                 this.locked = true
                 this.db.run("BEGIN TRANSACTION;", [],
@@ -191,7 +189,7 @@ export default class KeyVal {
     }
 
     /*  release mutual exclusion lock  */
-    release () {
+    async release () {
         if (!this.opened)
             throw new Error("still not opened")
         if (!this.locked)
@@ -199,7 +197,8 @@ export default class KeyVal {
         return new Promise((resolve, reject) => {
             this.db.run("COMMIT;", [],
                 (err) => {
-                    if (err) reject(err)
+                    if (err)
+                        reject(err)
                     else {
                         this.unlock((err) => {
                             if (err)
@@ -217,11 +216,11 @@ export default class KeyVal {
     }
 
     /*  close connection  */
-    close () {
+    async close () {
         if (!this.opened)
             throw new Error("still not opened")
         if (this.locked)
-            this.unlock()
+            await this.release()
         return new Promise((resolve, reject) => {
             this.db.close((err) => {
                 if (err)

@@ -49,7 +49,7 @@ export default class KeyVal {
     }
 
     /*  open connection  */
-    open () {
+    async open () {
         if (this.opened)
             throw new Error("already opened")
         let config = {
@@ -61,32 +61,31 @@ export default class KeyVal {
             config.user     = this.url.auth.split(":")[0]
             config.password = this.url.auth.split(":")[1]
         }
-        return new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
             this.db = new pg.Client(config)
             this.db.connect((err) => {
                 if (err) reject(err)
                 else     resolve()
             })
-        }).then(() => {
-            return new Promise((resolve, reject) => {
-                this.db.query(`CREATE TABLE IF NOT EXISTS ${this.options.table} ` +
-                    `(${this.options.colKey} VARCHAR(128) PRIMARY KEY, ` +
-                    ` ${this.options.colVal} TEXT);`, [],
-                    (err) => {
-                        if (err)
-                            reject(err)
-                        else {
-                            this.opened = true
-                            resolve()
-                        }
+        })
+        return new Promise((resolve, reject) => {
+            this.db.query(`CREATE TABLE IF NOT EXISTS ${this.options.table} ` +
+                `(${this.options.colKey} VARCHAR(128) PRIMARY KEY, ` +
+                ` ${this.options.colVal} TEXT);`, [],
+                (err) => {
+                    if (err)
+                        reject(err)
+                    else {
+                        this.opened = true
+                        resolve()
                     }
-                )
-            })
+                }
+            )
         })
     }
 
     /*  retrieve all keys  */
-    keys (pattern) {
+    async keys (pattern) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -110,7 +109,7 @@ export default class KeyVal {
     }
 
     /*  put value under key into store  */
-    put (key, value) {
+    async put (key, value) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -128,7 +127,7 @@ export default class KeyVal {
     }
 
     /*  get value under key from store  */
-    get (key) {
+    async get (key) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -150,7 +149,7 @@ export default class KeyVal {
     }
 
     /*  delete value under key from store  */
-    del (key) {
+    async del (key) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -166,11 +165,11 @@ export default class KeyVal {
     }
 
     /*  acquire mutual exclusion lock  */
-    acquire () {
+    async acquire () {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
-            this.lock("IPC-KeyVal", (unlock) => {
+            this.lock("IPC-KeyVal-rpm", (unlock) => {
                 this.unlock = unlock
                 this.locked = true
                 this.db.query("BEGIN TRANSACTION;", [],
@@ -184,7 +183,7 @@ export default class KeyVal {
     }
 
     /*  release mutual exclusion lock  */
-    release () {
+    async release () {
         if (!this.opened)
             throw new Error("still not opened")
         if (!this.locked)
@@ -210,9 +209,11 @@ export default class KeyVal {
     }
 
     /*  close connection  */
-    close () {
+    async close () {
         if (!this.opened)
             throw new Error("still not opened")
+        if (this.locked)
+            await this.release()
         return new Promise((resolve, reject) => {
             this.db.end((err) => {
                 if (err)

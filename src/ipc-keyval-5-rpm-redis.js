@@ -36,7 +36,7 @@ export default class KeyVal {
     }
 
     /*  open connection  */
-    open () {
+    async open () {
         if (this.opened)
             throw new Error("already opened")
         return new Promise((resolve, reject) => {
@@ -71,7 +71,7 @@ export default class KeyVal {
     }
 
     /*  retrieve all keys  */
-    keys (pattern) {
+    async keys (pattern) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -93,7 +93,7 @@ export default class KeyVal {
     }
 
     /*  put value under key into store  */
-    put (key, value) {
+    async put (key, value) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -105,7 +105,7 @@ export default class KeyVal {
     }
 
     /*  get value under key from store  */
-    get (key) {
+    async get (key) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -122,7 +122,7 @@ export default class KeyVal {
     }
 
     /*  delete value under key from store  */
-    del (key) {
+    async del (key) {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
@@ -134,11 +134,11 @@ export default class KeyVal {
     }
 
     /*  acquire mutual exclusion lock  */
-    acquire () {
+    async acquire () {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
-            this.lock("IPC-KeyVal", (unlock) => {
+            this.lock("IPC-KeyVal-rpm", (unlock) => {
                 this.unlock = unlock
                 this.locked = true
                 resolve()
@@ -147,7 +147,7 @@ export default class KeyVal {
     }
 
     /*  release mutual exclusion lock  */
-    release () {
+    async release () {
         if (!this.opened)
             throw new Error("still not opened")
         if (!this.locked)
@@ -162,11 +162,11 @@ export default class KeyVal {
     }
 
     /*  close connection  */
-    close () {
+    async close () {
         if (!this.opened)
             throw new Error("still not opened")
         if (this.locked)
-            this.unlock()
+            await this.release()
         this.client.quit()
         delete this.client
         this.opened = false
