@@ -57,7 +57,7 @@ class Store {
         cb(null)
     }
     acquire (cb) {
-        this.lock(`KeyVal-mpm:${this.id}:lock`, (unlock) => {
+        this.lock(`IPC-KeyVal-mpm:${this.id}:lock`, (unlock) => {
             this.unlock = unlock
             cb(null)
         })
@@ -103,7 +103,7 @@ export default class KeyVal {
                 addOnFork: true,
                 instance:  store,
                 methods:   methods,
-                name:      `KeyVal-mpm:${this.id}`
+                name:      `IPC-KeyVal-mpm:${this.id}`
             })
             for (const id in cluster.workers)
                 this.crpc.addWorker(cluster.workers[id])
@@ -111,7 +111,7 @@ export default class KeyVal {
         else {
             this.crpc = require("cluster-rpc/worker").create({
                 debug: false,
-                name:  `KeyVal-mpm:${this.id}`
+                name:  `IPC-KeyVal-mpm:${this.id}`
             })
         }
         return this.crpc.then((store) => {
