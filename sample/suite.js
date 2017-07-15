@@ -49,16 +49,18 @@ module.exports = async function (url) {
     for (let i = 0; i < keys.length; i++)
         await keyval.del(keys[i])
 
+    /*  retrieve keys (again)  */
+    keys = await keyval.keys()
+    expect(keys).to.be.deep.equal([])
+
     /*  work with threads and transactions  */
     await new Promise((resolve, reject) => {
         const run = async (id, finish) => {
-            let kv = new KeyVal(url)
-            await kv.open()
             let done = 0
             let max  = 10
             for (let i = 0; i < max; i++) {
                 setTimeout(async () => {
-                    //  console.log(`thread=${id} burst=${i}`)
+                    console.log(`thread=${id} burst=${i}`)
                     await keyval.acquire()
                     let val = await keyval.get(`foo.${id}`)
                     if (val === undefined)
@@ -66,10 +68,8 @@ module.exports = async function (url) {
                     val++
                     await keyval.put(`foo.${id}`, val)
                     await keyval.release()
-                    if (++done === max) {
-                        kv.close()
+                    if (++done === max)
                         finish()
-                    }
                 }, Math.round((Math.random() * 20)))
             }
         }
@@ -88,10 +88,6 @@ module.exports = async function (url) {
         expect(val).to.be.equal(10)
         await keyval.del(keys[i])
     }
-
-    /*  retrieve keys (again)  */
-    keys = await keyval.keys()
-    expect(keys).to.be.deep.equal([])
 
     /*  close connection  */
     await keyval.close()
