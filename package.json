@@ -20,11 +20,11 @@
         "cluster-rpc":                               "~1.0.6",
         "bluebird":                                  "~3.5.0",
         "urijs":                                     "~1.18.10",
-        "pg":                                        "~6.4.1",
+        "pg":                                        "~7.0.2",
         "redis":                                     "~2.7.1",
         "redis-lock":                                "~0.1.0",
         "lock":                                      "~0.1.4",
-        "babel-runtime":                             "~6.23.0"
+        "babel-runtime":                             "~6.25.0"
     },
     "devDependencies": {
         "grunt":                                     "~1.0.1",
@@ -35,12 +35,12 @@
         "grunt-mocha-test":                          "~0.13.2",
         "grunt-eslint":                              "~20.0.0",
         "babel-eslint":                              "~7.2.3",
-        "eslint":                                    "~4.2.0",
+        "eslint":                                    "~4.3.0",
         "eslint-config-standard":                    "~10.2.1",
         "eslint-plugin-standard":                    "~3.0.1",
         "eslint-plugin-promise":                     "~3.5.0",
         "eslint-plugin-import":                      "~2.7.0",
-        "eslint-plugin-node":                        "~5.1.0",
+        "eslint-plugin-node":                        "~5.1.1",
         "babel-preset-env":                          "~1.6.0",
         "babel-preset-es2016":                       "~6.24.1",
         "babel-preset-es2017":                       "~6.24.1",
