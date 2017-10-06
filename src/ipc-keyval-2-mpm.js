@@ -24,7 +24,7 @@
 
 import Bluebird from "bluebird"
 import cluster  from "cluster"
-import Lock     from "lock"
+import { Lock } from "lock"
 
 /*  internal Key-Value store  */
 class Store {

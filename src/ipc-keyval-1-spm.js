@@ -22,7 +22,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import Lock from "lock"
+import { Lock } from "lock"
 
 /*  Key-Value for Single-Process-Model (SPM)  */
 export default class KeyVal {

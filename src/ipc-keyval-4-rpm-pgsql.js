@@ -22,9 +22,9 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import URI  from "urijs"
-import pg   from "pg"
-import Lock from "lock"
+import URI      from "urijs"
+import pg       from "pg"
+import { Lock } from "lock"
 
 /*  Key-Value for Remote-Process-Model (RPM) with PostgreSQL standalone database  */
 export default class KeyVal {
