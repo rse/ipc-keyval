@@ -27,9 +27,9 @@ import URL              from "url"
 import KeyValSPM        from "./ipc-keyval-1-spm"
 import KeyValMPM        from "./ipc-keyval-2-mpm"
 import KeyValRPMsqlite  from "./ipc-keyval-3-rpm-sqlite"
-import KeyValRPMmysql   from "./ipc-keyval-6-rpm-mysql"
-import KeyValRPMpgsql   from "./ipc-keyval-4-rpm-pgsql"
-import KeyValRPMredis   from "./ipc-keyval-5-rpm-redis"
+import KeyValRPMmysql   from "./ipc-keyval-4-rpm-mysql"
+import KeyValRPMpgsql   from "./ipc-keyval-5-rpm-pgsql"
+import KeyValRPMredis   from "./ipc-keyval-6-rpm-redis"
 
 /*  Key-Value API  */
 class KeyVal {
