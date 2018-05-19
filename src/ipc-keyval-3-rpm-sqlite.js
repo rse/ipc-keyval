@@ -22,7 +22,6 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import URI      from "urijs"
 import { Lock } from "lock"
 
 /*  Key-Value for Remote-Process-Model (RPM) with SQLite embedded database  */

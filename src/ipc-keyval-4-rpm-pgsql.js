@@ -22,7 +22,7 @@
 **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import URI      from "urijs"
+import fs       from "fs"
 import pg       from "pg"
 import { Lock } from "lock"
 
