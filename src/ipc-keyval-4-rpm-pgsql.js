@@ -44,8 +44,10 @@ export default class KeyVal {
             this.options.database = this.url.pathname.replace(/^\//, "")
         else
             throw new Error("require path in URL")
-        if (this.url.query)
-            this.options = Object.assign(this.options, URI.parseQuery(this.url.query))
+        Object.keys(this.options).forEach((name) => {
+            if (this.url.query[name] !== undefined)
+                this.options[name] = this.url.query[name]
+        })
     }
 
     /*  open connection  */
