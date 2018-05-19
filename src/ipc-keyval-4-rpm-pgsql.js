@@ -61,6 +61,20 @@ export default class KeyVal {
             config.user     = this.url.auth.split(":")[0]
             config.password = this.url.auth.split(":")[1]
         }
+        if (   this.url.query.tls !== undefined
+            || this.url.query.ca  !== undefined
+            || this.url.query.key !== undefined
+            || this.url.query.crt !== undefined) {
+            config.ssl = { rejectUnauthorized: false }
+            if (this.url.query.ca !== undefined) {
+                config.ssl.ca = fs.readFileSync(this.url.query.ca).toString()
+                config.ssl.rejectUnauthorized = true
+            }
+            if (this.url.query.key !== undefined)
+                config.ssl.key = fs.readFileSync(this.url.query.key).toString()
+            if (this.url.query.crt !== undefined)
+                config.ssl.cert = fs.readFileSync(this.url.query.crt).toString()
+        }
         await new Promise((resolve, reject) => {
             this.db = new pg.Client(config)
             this.db.connect((err) => {
