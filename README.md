@@ -32,7 +32,7 @@ supports the following modes:
   This is for Node applications split into distinct process, usually
   running also on distinct machines.
   The storage is performed with the help of an external database.
-  Currently SQLite, PostgreSQL and Redis are supported.
+  Currently SQLite, MySQL/MariaDB, PostgreSQL and Redis are supported.
 
 Installation
 ------------
@@ -87,8 +87,9 @@ The following URLs are supported on `new KeyVal(url)`:
 
 - `spm`
 - `mpm:<unique-id>`
-- `rpm+sqlite://<filename>[?table=<table>&key=<col>&val=<col>]`
-- `rpm+pgsql://[<username>:<password>@]<host>[:<port>][/<database>][?table=<table>&key=<col>&val=<col>]`
+- `rpm+sqlite://<filename>[?table=<table>&colKey=<col>&colVal=<col>]`
+- `rpm+mysql://[<username>:<password>@]<host>[:<port>][/<database>][?table=<table>&colKey=<col>&colVal=<col>]`
+- `rpm+pgsql://[<username>:<password>@]<host>[:<port>][/<database>][?table=<table>&colKey=<col>&colVal=<col>]`
 - `rpm+redis://[xxx:<secret>@]<host>[:<port>][/<scope>]`
 
 Application Programming Interface (API)

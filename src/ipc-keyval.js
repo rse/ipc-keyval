@@ -27,6 +27,7 @@ import URL              from "url"
 import KeyValSPM        from "./ipc-keyval-1-spm"
 import KeyValMPM        from "./ipc-keyval-2-mpm"
 import KeyValRPMsqlite  from "./ipc-keyval-3-rpm-sqlite"
+import KeyValRPMmysql   from "./ipc-keyval-6-rpm-mysql"
 import KeyValRPMpgsql   from "./ipc-keyval-4-rpm-pgsql"
 import KeyValRPMredis   from "./ipc-keyval-5-rpm-redis"
 
@@ -41,6 +42,7 @@ class KeyVal {
             this.strategy = new KeyValMPM(urlParsed)
         else if (typeof urlParsed.protocol === "string" && (m = urlParsed.protocol.match(/^rpm(?:\+([a-z]+))?:$/)) !== null) {
             if      (m[1] === "sqlite") this.strategy = new KeyValRPMsqlite(urlParsed)
+            else if (m[1] === "mysql")  this.strategy = new KeyValRPMmysql(urlParsed)
             else if (m[1] === "pgsql")  this.strategy = new KeyValRPMpgsql(urlParsed)
             else if (m[1] === "redis")  this.strategy = new KeyValRPMredis(urlParsed)
             else
