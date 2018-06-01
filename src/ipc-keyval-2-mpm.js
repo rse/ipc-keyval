@@ -74,7 +74,7 @@ class Store {
     }
     destroy (cb) {
         if (this.unlock !== null)
-            this.release(cb)
+            this.release().then(() => cb(null), (err) => cb(err))
         else
             cb(null)
     }
@@ -168,7 +168,8 @@ export default class KeyVal {
     async close () {
         if (!this.opened)
             throw new Error("still not opened")
-        await this.store.destroy()
+        if (cluster.isMaster)
+            await this.store.destroy()
         delete this.store
         delete this.crpc
         this.opened = false
