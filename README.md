@@ -15,20 +15,21 @@ About
 
 This [Node.js](https://nodejs.org) module provides an abstraction layer
 for Inter-Process-Communication through Key-Value Storage. It
-supports the following modes:
+supports the following modes (in order of increasing process scope and
+overall complexity):
 
-- Single-Process-Model (SPM):<br/>
+- **Single-Process-Model (SPM):**<br/>
   This is for Node applications NOT using the `cluster` module.
   The storage is performed with an in-memory hash.
   No external resource is needed.
 
-- Multi-Process-Model (MPM):<br/>
+- **Multi-Process-Model (MPM):**<br/>
   This is for Node applications using the `cluster` module.
   The storage is performed with an in-memory hash
   in each process and an IPC message exchange between the processes
   with the help of the `cluster` module. No external resource is needed.
 
-- Remote-Process-Model (RPM):<br/>
+- **Remote-Process-Model (RPM):**<br/>
   This is for Node applications split into distinct process, usually
   running also on distinct machines.
   The storage is performed with the help of an external database.
@@ -85,12 +86,14 @@ Usage
 
 The following URLs are supported on `new KeyVal(url)`:
 
-- `spm`
-- `mpm:<unique-id>`
+- `spm:<id>`
+- `mpm:<id>`
 - `rpm+sqlite://<filename>[?table=<table>&colKey=<col>&colVal=<col>]`
 - `rpm+mysql://[<username>:<password>@]<host>[:<port>][/<database>][?table=<table>&colKey=<col>&colVal=<col>]`
 - `rpm+pgsql://[<username>:<password>@]<host>[:<port>][/<database>][?table=<table>&colKey=<col>&colVal=<col>]`
 - `rpm+redis://[xxx:<secret>@]<host>[:<port>][/<scope>]`
+
+The `<id>` is an arbitrary unique identifier matching the regular expression `^[a-zA-Z][a-zA-Z0-9-]*$`.
 
 Application Programming Interface (API)
 ---------------------------------------

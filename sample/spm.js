@@ -1,5 +1,5 @@
 
 const suite = require("./suite")
 
-suite("spm")
+suite("spm:foo")
 
