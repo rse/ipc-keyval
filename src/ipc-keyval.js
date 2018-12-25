@@ -35,7 +35,7 @@ import KeyValRPMredis   from "./ipc-keyval-6-rpm-redis"
 class KeyVal {
     constructor (url) {
         let m
-        let urlParsed = URL.parse(url, true)
+        let urlParsed = new URL.URL(url === "spm" ? "spm:" : url)
         if (url === "spm")
             this.strategy = new KeyValSPM(urlParsed)
         else if (urlParsed.protocol === "mpm:")

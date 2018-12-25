@@ -88,7 +88,7 @@ export default class KeyVal {
         this.lock   = Lock()
         this.locked = false
         this.unlock = null
-        this.id     = this.url.hostname
+        this.id     = this.url.pathname
     }
 
     /*  open connection  */

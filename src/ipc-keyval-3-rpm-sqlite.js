@@ -43,8 +43,8 @@ export default class KeyVal {
         else
             throw new Error("require path in URL")
         Object.keys(this.options).forEach((name) => {
-            if (this.url.query[name] !== undefined)
-                this.options[name] = this.url.query[name]
+            if (this.url.searchParams !== undefined && this.url.searchParams.get("name") !== null)
+                this.options[name] = this.url.searchParams.get("name")
         })
         try {
             this.sqlite = require("sqlite3")
