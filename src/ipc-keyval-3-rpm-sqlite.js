@@ -109,7 +109,7 @@ export default class KeyVal {
                     if (err)
                         reject(err)
                     else {
-                        let keys = result.map((row) => row[this.options.colKey])
+                        const keys = result.map((row) => row[this.options.colKey])
                         resolve(keys)
                     }
                 }

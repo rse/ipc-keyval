@@ -95,9 +95,9 @@ export default class KeyVal {
     async open () {
         if (this.opened)
             throw new Error("already opened")
-        let methods = [ "keys", "put", "get", "del", "acquire", "release", "destroy" ]
+        const methods = [ "keys", "put", "get", "del", "acquire", "release", "destroy" ]
         if (cluster.isMaster) {
-            let store = new Store(this.id)
+            const store = new Store(this.id)
             this.crpc = require("cluster-rpc/master").create({
                 debug:     false,
                 addOnFork: true,

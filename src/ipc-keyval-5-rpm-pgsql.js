@@ -54,7 +54,7 @@ export default class KeyVal {
     async open () {
         if (this.opened)
             throw new Error("already opened")
-        let config = {
+        const config = {
             database: this.options.database,
             host: this.url.hostname,
             port: this.url.port ? parseInt(this.url.port) : 5432
@@ -117,7 +117,7 @@ export default class KeyVal {
                     if (err)
                         reject(err)
                     else {
-                        let keys = result.rows.map((row) => row[this.options.colKey])
+                        const keys = result.rows.map((row) => row[this.options.colKey])
                         resolve(keys)
                     }
                 }

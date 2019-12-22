@@ -40,7 +40,7 @@ export default class KeyVal {
         if (this.opened)
             throw new Error("already opened")
         return new Promise((resolve, reject) => {
-            let options = {}
+            const options = {}
             options.host = this.url.hostname
             options.port = this.url.port ? parseInt(this.url.port) : 6379
             if (this.url.password)

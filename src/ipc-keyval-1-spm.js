@@ -64,7 +64,7 @@ export default class KeyVal {
     async get (key) {
         if (!this.opened)
             throw new Error("still not opened")
-        let value = this.store[key]
+        const value = this.store[key]
         return value
     }
 

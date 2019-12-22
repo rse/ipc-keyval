@@ -54,7 +54,7 @@ export default class KeyVal {
     async open () {
         if (this.opened)
             throw new Error("already opened")
-        let config = {
+        const config = {
             database: this.options.database,
             host: this.url.hostname,
             port: this.url.port ? parseInt(this.url.port) : 3306
@@ -118,7 +118,7 @@ export default class KeyVal {
                     if (err)
                         reject(err)
                     else {
-                        let keys = result.map((row) => row[this.options.colKey])
+                        const keys = result.map((row) => row[this.options.colKey])
                         resolve(keys)
                     }
                 }
@@ -131,7 +131,7 @@ export default class KeyVal {
         if (!this.opened)
             throw new Error("still not opened")
         return new Promise((resolve, reject) => {
-            let val = JSON.stringify(value)
+            const val = JSON.stringify(value)
             this.db.query(`INSERT INTO ${this.options.table} ` +
                 `(${this.options.colKey}, ${this.options.colVal}) VALUES (?, ?) ` +
                 `ON DUPLICATE KEY UPDATE ${this.options.colVal} = ?;`,
